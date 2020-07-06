@@ -3,14 +3,15 @@ package com.company.resourceapi.controllers;
 import com.company.resourceapi.entities.Project;
 import com.company.resourceapi.services.ProjectService;
 
-import javax.validation.Valid;
+import java.net.URI;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,8 +45,10 @@ public class ProjectRestController {
 
 	@ApiOperation("Create a Project")
 	@PostMapping
-	public Project createProject(@Valid @RequestBody Project project) {
-		return projectService.createProject(project);
+	public ResponseEntity<Project> createProject(RequestEntity<Project> request) {
+		URI location = URI.create(request.getUrl().toString() + "/");
+		Project returnProject = projectService.createProject(request.getBody());
+		return ResponseEntity.created(location).body(returnProject);
 	}
-	
+
 }
