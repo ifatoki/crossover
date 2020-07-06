@@ -1,4 +1,4 @@
-package com.crossover.project;
+package com.company.resourceapi;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

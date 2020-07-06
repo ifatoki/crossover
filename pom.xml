@@ -8,11 +8,11 @@
 		<version>2.2.8.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.crossover</groupId>
-	<artifactId>project</artifactId>
+	<groupId>com.company</groupId>
+	<artifactId>resourceapi</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>demo</name>
-	<description>Demo project for Spring Boot</description>
+	<name>Resource API</name>
+	<description>Demo project for Crossover</description>
 
 	<properties>
 		<java.version>1.8</java.version>
