@@ -30,15 +30,11 @@ public class ProjectServiceImpl implements ProjectService {
 		return null;
 	}
 
-	@Override
 	public Project createProject(Project project) {
-		// TODO Auto-generated method stub
-		try {
-			sdlcSystemRepository.findById(project.getSdlcSystem().getId()).ifPresent(project::setSdlcSystem);
-			return projectRepository.save(project);
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+		if (project.getExternalId() == null) throw new NotFoundException(SdlcSystem.class);
+		SdlcSystem sdlcSystem = sdlcSystemRepository.findById(project.getSdlcSystem().getId())
+			.orElseThrow(() -> new NotFoundException(SdlcSystem.class));
+		project.setSdlcSystem(sdlcSystem);
+		return projectRepository.save(project);
 	}
 }
