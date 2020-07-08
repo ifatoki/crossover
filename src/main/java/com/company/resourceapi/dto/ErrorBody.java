@@ -1,4 +1,4 @@
-package com.company.resourceapi.exceptions;
+package com.company.resourceapi.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

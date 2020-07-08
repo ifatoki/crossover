@@ -1,5 +1,10 @@
-package com.company.resourceapi.exceptions;
+package com.company.resourceapi.exceptions.handlers;
 
+import com.company.resourceapi.dto.ErrorBody;
+import com.company.resourceapi.exceptions.ConflictException;
+import com.company.resourceapi.exceptions.InvalidRequestBodyException;
+import com.company.resourceapi.exceptions.NotFoundException;
+import com.company.resourceapi.exceptions.NotFoundSdlcSystemException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 import org.springframework.http.HttpStatus;
