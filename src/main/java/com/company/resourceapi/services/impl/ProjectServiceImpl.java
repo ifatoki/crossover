@@ -53,7 +53,7 @@ public class ProjectServiceImpl implements ProjectService {
 		return projectRepository.findById(id)
 			.map(project -> {
 				if (externalId != null) project.setExternalId(externalId);
-				if (name != null) project.setName(name);
+				if (name != "") project.setName(name);
 				if (sdlcSystem != null) {
 					project = setSdlcSystem(project, sdlcSystem.getId());
 				}

@@ -35,7 +35,7 @@ public class Project {
     private String externalId;
 
     @Column(name = "name")
-    private String name;
+    private String name = "";
 
     @ManyToOne
     @JoinColumn(name = "sdlc_system_id")
