@@ -2,7 +2,6 @@ package com.company.resourceapi.services.impl;
 
 import java.util.List;
 import java.util.Optional;
-// import java.sql.SQLIntegrityConstraintViolationException;
 
 import com.company.resourceapi.entities.Project;
 import com.company.resourceapi.entities.SdlcSystem;
@@ -44,8 +43,8 @@ public class ProjectServiceImpl implements ProjectService {
 			throw new InvalidRequestBodyException("externalId");
 		if (projectDetails.getSdlcSystem() == null)
 			throw new InvalidRequestBodyException("sdlcSystem");
-		Project project = setSdlcSystem(projectDetails, projectDetails.getSdlcSystem().getId());
-		return saveProject(project);
+		projectDetails = verifyKeyConstraints(projectDetails);
+		return saveProject(projectDetails);
 	}
 
 	public Project updateProject(long id, Project projectDetails) {
@@ -60,6 +59,7 @@ public class ProjectServiceImpl implements ProjectService {
 				if (sdlcSystem != null) {
 					project = setSdlcSystem(project, sdlcSystem.getId());
 				}
+				project = verifyKeyConstraints(project);
 				return saveProject(project);
 			})
 			.orElseThrow(() -> new NotFoundException(Project.class, id));
@@ -76,7 +76,9 @@ public class ProjectServiceImpl implements ProjectService {
 		}
 	}
 
-	private Project setSdlcSystem(Project project, long sdlcSystemId) {
+	private Project verifyKeyConstraints(Project project) {
+		long sdlcSystemId = project.getSdlcSystem().getId();
+
 		return sdlcSystemRepository.findById(sdlcSystemId)
 			.map(sdlcSystem -> {
 				List<Project> duplicateProjects = projectRepository.findAll(
@@ -86,8 +88,16 @@ public class ProjectServiceImpl implements ProjectService {
 						ProjectSpecification.withSdlcId(sdlcSystemId)
 					)
 				);
-				if (duplicateProjects.size() > 0)
+				if (duplicateProjects.size() > 0 && project.getId() != duplicateProjects.get(0).getId()) 
 					throw new ConflictException(sdlcSystemId, project.getExternalId());
+				return project;
+			})
+			.orElseThrow(() -> new NotFoundSdlcSystemException(SdlcSystem.class, sdlcSystemId));
+	}
+
+	private Project setSdlcSystem(Project project, long sdlcSystemId) {
+		return sdlcSystemRepository.findById(sdlcSystemId)
+			.map(sdlcSystem -> {
 				project.setSdlcSystem(sdlcSystem);
 				return project;
 			})

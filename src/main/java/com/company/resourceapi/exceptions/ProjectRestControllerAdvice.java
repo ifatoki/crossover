@@ -8,8 +8,10 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import io.swagger.models.Response;
+import javassist.bytecode.ExceptionTable;
 
 @ControllerAdvice
 public class ProjectRestControllerAdvice {
@@ -24,12 +26,23 @@ public class ProjectRestControllerAdvice {
     return new ResponseEntity<ErrorBody>(error, HttpStatus.NOT_FOUND);
   }
 
-  @ExceptionHandler({InvalidRequestBodyException.class, HttpMessageNotReadableException.class})
+  @ExceptionHandler({InvalidRequestBodyException.class, HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
   public ResponseEntity<ErrorBody> invalidRequestBodyExceptionHandler(Exception ex) {
-    String invalidExceptionMessage = "sdlcSystem in request body is invalid";
+    String exceptionMessage;
+    
+    switch(ex.getClass().getSimpleName()) {
+      case "MethodArgumentTypeMismatchException" :
+        exceptionMessage = "invalid project Id";
+        break;
+      case "HttpMessageNotReadableException":
+        exceptionMessage = "sdlcSystem in request body is invalid";
+        break;
+      default:
+        exceptionMessage = ex.getMessage();
+    }
     ErrorBody error = new ErrorBody(
       HttpStatus.BAD_REQUEST.value(),
-      ex instanceof HttpMessageNotReadableException ? invalidExceptionMessage : ex.getMessage(),
+      exceptionMessage,
       ex.getClass().getSimpleName()
     );
     return new ResponseEntity<ErrorBody>(error, HttpStatus.BAD_REQUEST);

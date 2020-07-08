@@ -5,8 +5,6 @@ import com.company.resourceapi.services.ProjectService;
 
 import java.net.URI;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,7 +52,7 @@ public class ProjectRestController {
 
 	@ApiOperation("Update a Project")
 	@PatchMapping(ENDPOINT_ID)
-	public ResponseEntity<Project> updateProject(@PathVariable(value = "id") Long projectId,
+	public ResponseEntity<Project> updateProject(@PathVariable(value = "id") long projectId,
 			@RequestBody Project projectDetails) {
 		Project returnProject = projectService.updateProject(projectId, projectDetails);
 		return ResponseEntity.ok(returnProject);
