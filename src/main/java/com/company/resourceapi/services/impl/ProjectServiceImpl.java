@@ -40,18 +40,43 @@ public class ProjectServiceImpl implements ProjectService {
 			throw new InvalidRequestBodyException("externalId");
 		if (projectDetails.getSdlcSystem() == null)
 			throw new InvalidRequestBodyException("sdlcSystem");
-		long id = projectDetails.getSdlcSystem().getId();
-		return sdlcSystemRepository.findById(id)
-			.map(sdlcSystem -> {
-				projectDetails.setSdlcSystem(sdlcSystem);
-				try {
-					return projectRepository.save(projectDetails);
-				} catch (Exception e) {
-					if (e instanceof DataIntegrityViolationException) {
-						throw new ConflictException(id, projectDetails.getExternalId());
-					} 
-					throw new ServerErrorException(e.getMessage(), e);
+		Project project = setSdlcSystem(projectDetails, projectDetails.getSdlcSystem().getId());
+		return saveProject(project);
+	}
+
+	public Project updateProject(long id, Project projectDetails) {
+		SdlcSystem sdlcSystem = projectDetails.getSdlcSystem();
+		String externalId = projectDetails.getExternalId();
+		String name = projectDetails.getName();
+
+		System.out.println(projectDetails);
+		return projectRepository.findById(id)
+			.map(project -> {
+				if (externalId != null) project.setExternalId(externalId);
+				if (name != null) project.setName(name);
+				if (sdlcSystem != null) {
+					project = setSdlcSystem(project, sdlcSystem.getId());
 				}
-			}).orElseThrow(() -> new NotFoundSdlcSystemException(SdlcSystem.class, id));
+				return saveProject(project);
+			}).orElseThrow(() -> new NotFoundException(Project.class, id));
+	}
+
+	private Project saveProject(Project project) {
+		try {
+			return projectRepository.save(project);
+		} catch (Exception e) {
+			if (e instanceof DataIntegrityViolationException) {
+				throw new ConflictException(project.getSdlcSystem().getId(), project.getExternalId());
+			} 
+			throw new ServerErrorException(e.getMessage(), e);
+		}
+	}
+
+	private Project setSdlcSystem(Project project, long sdlcSystemId) {
+		return sdlcSystemRepository.findById(sdlcSystemId)
+			.map(sdlcSystem -> {
+				project.setSdlcSystem(sdlcSystem);
+				return project;
+			}).orElseThrow(() -> new NotFoundSdlcSystemException(SdlcSystem.class, sdlcSystemId));
 	}
 }
