@@ -88,7 +88,7 @@ public class ProjectServiceImpl implements ProjectService {
 						ProjectSpecification.withSdlcId(sdlcSystemId)
 					)
 				);
-				if (duplicateProjects.size() > 0 && project.getId() != duplicateProjects.get(0).getId()) 
+				if (!duplicateProjects.isEmpty() && project.getId() != duplicateProjects.get(0).getId()) 
 					throw new ConflictException(sdlcSystemId, project.getExternalId());
 				return project;
 			})
