@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Date;
+import java.util.List;
 
 @DataJpaTest
 public class ProjectRepositoryUnitTest {
@@ -29,7 +30,7 @@ public class ProjectRepositoryUnitTest {
   private Date testTime = new Date();
 
   @Test
-  public void whenFindById_thenReturnProject() throws Exception{
+  public void whenFindById_thenReturnProject() throws Exception {
     // Given the loaded data from the default schema.sql and data.sql
     SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
     Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
@@ -48,6 +49,43 @@ public class ProjectRepositoryUnitTest {
       .isEqualTo("TEST_ID");
     assertThat(project.getSdlcSystem())
       .as("SdlcSystem should be equal to ")
-      .isEqualToComparingFieldByFieldRecursively(testSdlcSystem);
+      .usingRecursiveComparison()
+      .isEqualTo(testSdlcSystem);
+  }
+
+  @Test
+  public void whenFindAll_thenReturnAllProjects() throws Exception {
+    // Given the loaded data from the default schema.sql and data.sql
+    long initialSize = projectRepository.findAll().size();
+    SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
+    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+    newProject = entityManager.merge(newProject);
+    entityManager.flush();
+
+    // When
+    List<Project> projects = projectRepository.findAll();
+
+    // Then
+    assertThat(initialSize).isEqualTo(8L);
+    assertThat(projects.size()).isEqualTo(initialSize + 1);
+    assertThat(projects.get(1).getClass().getSimpleName()).isEqualTo(Project.class.getSimpleName());
+  }
+
+  @Test
+  public void whenSave_thenCommitProjectToMemory() throws Exception {
+    // Given the loaded data from the default schema.sql and data.sql
+    long initialSize = projectRepository.findAll().size();
+    SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
+    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+
+    // When
+    Project project = projectRepository.save(newProject);
+    List<Project> projects = projectRepository.findAll();
+
+    // Then
+    assertThat(projects.size()).isEqualTo(initialSize + 1);
+    assertThat(projects.get(projects.size() - 1))
+      .usingRecursiveComparison()
+      .isEqualTo(project);
   }
 }
