@@ -88,4 +88,21 @@ public class ProjectRepositoryUnitTest {
       .usingRecursiveComparison()
       .isEqualTo(project);
   }
+
+  @Test
+  public void whenfindBySdlcSystemIdAndId_thenReturnMatchingProject() throws Exception {
+    // Given the loaded data from the default schema.sql and data.sql
+    SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
+    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+    newProject = entityManager.merge(newProject);
+    entityManager.flush();
+
+    // When
+    Project project = projectRepository.findBySdlcSystemIdAndId(testSdlcSystem.getId(), newProject.getId()).get();
+
+    // Then
+    assertThat(project)
+      .usingRecursiveComparison()
+      .isEqualTo(newProject);
+  }
 }

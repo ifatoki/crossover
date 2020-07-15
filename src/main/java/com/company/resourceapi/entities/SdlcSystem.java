@@ -14,12 +14,19 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Table(name = "sdlc_system")
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@NoArgsConstructor
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class SdlcSystem {
 
     @Id
@@ -28,6 +35,7 @@ public class SdlcSystem {
 
     @NotEmpty
     @URL
+    @NonNull
     @Column(name = "base_url", nullable = false)
     private String baseUrl;
 

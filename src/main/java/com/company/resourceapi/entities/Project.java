@@ -26,9 +26,9 @@ import lombok.RequiredArgsConstructor;
 @Table(name = "project")
 @EntityListeners(AuditingEntityListener.class)
 @Data
+@NoArgsConstructor
 @RequiredArgsConstructor
 @AllArgsConstructor
-@NoArgsConstructor
 public class Project {
 
     @Id
