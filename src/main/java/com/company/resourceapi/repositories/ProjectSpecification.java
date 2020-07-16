@@ -6,13 +6,13 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ProjectSpecification {
   
-  public static Specification<Project> withExternalId(String externalId) {
+  public Specification<Project> withExternalId(String externalId) {
     return (root, query, cb) -> {
       return cb.equal(root.get("externalId"), externalId);
     };
   }
 
-  public static Specification<Project> withSdlcId(long id) {
+  public Specification<Project> withSdlcId(long id) {
     return (root, query, cb) -> {
       return cb.equal(root.get("sdlcSystem").get("id"), id);
     };

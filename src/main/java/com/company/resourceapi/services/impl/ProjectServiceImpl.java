@@ -14,8 +14,7 @@ import com.company.resourceapi.repositories.ProjectSpecification;
 import com.company.resourceapi.repositories.SdlcSystemRepository;
 import com.company.resourceapi.services.ProjectService;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,14 +23,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerErrorException;
 
 @Service
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
-	private final ProjectRepository projectRepository;
+	private ProjectRepository projectRepository;
 
 	@Autowired
-	private final SdlcSystemRepository sdlcSystemRepository;
+	private SdlcSystemRepository sdlcSystemRepository;
+
+	@Autowired
+	private ProjectSpecification projectSpecification;
 
 	public Project getProject(long id) {
 		return projectRepository.findById(id)
@@ -83,9 +85,9 @@ public class ProjectServiceImpl implements ProjectService {
 			.map(sdlcSystem -> {
 				List<Project> duplicateProjects = projectRepository.findAll(
 					Specification.where(
-						ProjectSpecification.withExternalId(project.getExternalId())
+						projectSpecification.withExternalId(project.getExternalId())
 					).and(
-						ProjectSpecification.withSdlcId(sdlcSystemId)
+						projectSpecification.withSdlcId(sdlcSystemId)
 					)
 				);
 				if (!duplicateProjects.isEmpty() && project.getId() != duplicateProjects.get(0).getId()) 
