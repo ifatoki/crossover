@@ -1,7 +1,6 @@
 package com.company.resourceapi.services.impl;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.company.resourceapi.entities.Project;
 import com.company.resourceapi.entities.SdlcSystem;
@@ -14,6 +13,7 @@ import com.company.resourceapi.repositories.ProjectSpecification;
 import com.company.resourceapi.repositories.SdlcSystemRepository;
 import com.company.resourceapi.services.ProjectService;
 
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import org.springframework.web.server.ServerErrorException;
 
 @Service
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
 	@Autowired
