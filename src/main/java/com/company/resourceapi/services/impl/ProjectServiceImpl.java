@@ -46,6 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
 			throw new InvalidRequestBodyException("externalId");
 		if (projectDetails.getSdlcSystem() == null)
 			throw new InvalidRequestBodyException("sdlcSystem");
+		projectDetails = setSdlcSystem(projectDetails, projectDetails.getSdlcSystem().getId());
 		projectDetails = verifyKeyConstraints(projectDetails);
 		return saveProject(projectDetails);
 	}

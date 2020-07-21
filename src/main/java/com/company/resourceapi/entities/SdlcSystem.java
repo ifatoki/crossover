@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class SdlcSystem {
 
@@ -35,7 +34,6 @@ public class SdlcSystem {
 
     @NotEmpty
     @URL
-    @NonNull
     @Column(name = "base_url", nullable = false)
     private String baseUrl;
 

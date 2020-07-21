@@ -100,7 +100,7 @@ public class ProjectServiceUnitTest {
 
     // Then
     verify(projectRepository).save(newProject);
-    verify(sdlcSystemRepository, times(2)).findById(testSdlcSystem.getId());
+    verify(sdlcSystemRepository, times(3)).findById(testSdlcSystem.getId());
     verify(projectRepository).findAll(ArgumentMatchers.any(Specification.class));
   }
 
@@ -115,7 +115,7 @@ public class ProjectServiceUnitTest {
     assertThrows(ConflictException.class, () -> {
       projectService.createProject(newProject);
     });
-    verify(sdlcSystemRepository, times(2)).findById(testSdlcSystem.getId());
+    verify(sdlcSystemRepository, times(3)).findById(testSdlcSystem.getId());
   }
 
   @Test
