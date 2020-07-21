@@ -1,5 +1,6 @@
 package com.company.resourceapi;
 
+import static com.company.resourceapi.utils.TestUtils.getProject;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,12 +41,7 @@ public class ProjectRestControllerUnitTest {
   @Test
   void whenGetProject_thenReturn200() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
-    SdlcSystem sdlcSystem = new SdlcSystem();
-    sdlcSystem.setId(1L);
-    Project project = new Project();
-    project.setId(24L);
-    project.setSdlcSystem(sdlcSystem);
-    project.setExternalId("NEVER_EVER");
+    Project project = getProject();
  
     when(productService.getProject(ArgumentMatchers.anyLong())).thenReturn(project);
 
@@ -58,12 +54,7 @@ public class ProjectRestControllerUnitTest {
   @Test
   void whenCreateProject_thenReturn200() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
-    SdlcSystem sdlcSystem = new SdlcSystem();
-    sdlcSystem.setId(1L);
-    Project project = new Project();
-    project.setId(24L);
-    project.setSdlcSystem(sdlcSystem);
-    project.setExternalId("NEVER_EVER");
+    Project project = getProject();
 
     when(productService.createProject(ArgumentMatchers.any(Project.class))).thenReturn(project);
     
@@ -79,14 +70,8 @@ public class ProjectRestControllerUnitTest {
   @Test
   void whenUpdateProject_thenReturn200() throws Exception {
     ObjectMapper objectMapper = new ObjectMapper();
-    SdlcSystem sdlcSystem = new SdlcSystem();
-    sdlcSystem.setId(1L);
-    Project project = new Project();
-    project.setId(24L);
-    project.setSdlcSystem(sdlcSystem);
-    project.setExternalId("NEVER_EVER");
-    Project newProject = new Project();
-    newProject.setId(30L);
+    Project project = getProject();
+    Project newProject = getProject(30L, 24L);
     newProject.setName("Project Micheal");
     Project mergedProject = mergeProjects(project, newProject);
 

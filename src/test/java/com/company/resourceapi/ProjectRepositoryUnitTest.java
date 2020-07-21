@@ -1,5 +1,11 @@
 package com.company.resourceapi;
 
+import static com.company.resourceapi.utils.TestUtils.appendDates;
+import static com.company.resourceapi.utils.TestUtils.getProject;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+
 import com.company.resourceapi.entities.Project;
 import com.company.resourceapi.entities.SdlcSystem;
 import com.company.resourceapi.repositories.ProjectRepository;
@@ -9,11 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Date;
-import java.util.List;
 
 @DataJpaTest
 public class ProjectRepositoryUnitTest {
@@ -27,13 +28,12 @@ public class ProjectRepositoryUnitTest {
   @Autowired
   private SdlcSystemRepository sdlcSystemRepository;
 
-  private Date testTime = new Date();
-
   @Test
   public void whenFindById_thenReturnProject() throws Exception {
     // Given the loaded data from the default schema.sql and data.sql
     SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
-    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+    Project newProject = (Project)appendDates(getProject());
+    newProject.setSdlcSystem(testSdlcSystem);
     newProject = entityManager.merge(newProject);
     entityManager.flush();
 
@@ -43,10 +43,10 @@ public class ProjectRepositoryUnitTest {
     // Then
     assertThat(project.getName())
       .as("Name should be equal to ")
-      .isEqualTo("new test project");
+      .isEqualTo(newProject.getName());
     assertThat(project.getExternalId())
       .as("ExternalId should be equal to ")
-      .isEqualTo("TEST_ID");
+      .isEqualTo(newProject.getExternalId());
     assertThat(project.getSdlcSystem())
       .as("SdlcSystem should be equal to ")
       .usingRecursiveComparison()
@@ -57,8 +57,7 @@ public class ProjectRepositoryUnitTest {
   public void whenFindAll_thenReturnAllProjects() throws Exception {
     // Given the loaded data from the default schema.sql and data.sql
     long initialSize = projectRepository.findAll().size();
-    SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
-    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+    Project newProject = (Project)appendDates(getProject());
     newProject = entityManager.merge(newProject);
     entityManager.flush();
 
@@ -75,8 +74,7 @@ public class ProjectRepositoryUnitTest {
   public void whenSave_thenCommitProjectToMemory() throws Exception {
     // Given the loaded data from the default schema.sql and data.sql
     long initialSize = projectRepository.findAll().size();
-    SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
-    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+    Project newProject = (Project)appendDates(getProject());
 
     // When
     Project project = projectRepository.save(newProject);
@@ -91,14 +89,12 @@ public class ProjectRepositoryUnitTest {
 
   @Test
   public void whenfindBySdlcSystemIdAndId_thenReturnMatchingProject() throws Exception {
-    // Given the loaded data from the default schema.sql and data.sql
-    SdlcSystem testSdlcSystem = sdlcSystemRepository.findById(1L).get();
-    Project newProject = new Project(133L, "TEST_ID", "new test project", testSdlcSystem, testTime.toInstant(), testTime.toInstant());
+    Project newProject = (Project)appendDates(getProject());
     newProject = entityManager.merge(newProject);
     entityManager.flush();
 
     // When
-    Project project = projectRepository.findBySdlcSystemIdAndId(testSdlcSystem.getId(), newProject.getId()).get();
+    Project project = projectRepository.findBySdlcSystemIdAndId(newProject.getSdlcSystem().getId(), newProject.getId()).get();
 
     // Then
     assertThat(project)

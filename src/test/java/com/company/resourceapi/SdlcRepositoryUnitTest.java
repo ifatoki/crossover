@@ -1,6 +1,8 @@
 package com.company.resourceapi;
 
-import java.util.Date;
+import static com.company.resourceapi.utils.TestUtils.appendDates;
+import static com.company.resourceapi.utils.TestUtils.getSdlcSystem;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.company.resourceapi.entities.SdlcSystem;
 import com.company.resourceapi.repositories.SdlcSystemRepository;
@@ -9,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class SdlcRepositoryUnitTest {
@@ -21,12 +21,10 @@ public class SdlcRepositoryUnitTest {
   @Autowired
   private SdlcSystemRepository sdlcSystemRepository;
 
-  private Date testTime = new Date();
-
   @Test
   public void whenFindById_thenReturnSdlcSystem() throws Exception {
     // Given the loaded Data from the default schema.sql and data.sql
-    SdlcSystem newSdlcSystem = new SdlcSystem(1L, "https://java.itunufatoki.com", "A test description", testTime.toInstant(), testTime.toInstant());
+    SdlcSystem newSdlcSystem = (SdlcSystem)appendDates(getSdlcSystem("https://java.itunufatoki.com"));
     newSdlcSystem = entityManager.merge(newSdlcSystem);
     entityManager.flush();
 
