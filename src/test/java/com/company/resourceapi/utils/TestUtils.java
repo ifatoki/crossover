@@ -13,7 +13,6 @@ public class TestUtils {
 
   private static long DEFAULT_PROJECT_ID = 24L;
   private static long DEFAULT_SDLC_SYSTEM_ID = 1L;
-  // private static String DEFAULT_EXTERNAL_ID = "PROJECT";
   private static Date testTime = new Date();
   private static Faker faker = new Faker(new Locale("en-NG"));
 

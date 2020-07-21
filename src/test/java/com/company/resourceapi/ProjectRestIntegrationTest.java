@@ -119,4 +119,16 @@ public class ProjectRestIntegrationTest {
       .andExpect(content().contentType(MediaType.APPLICATION_JSON))
       .andExpect(jsonPath("$.message", is("Sdlc System with Id " + project.getSdlcSystem().getId() + " not found")));
   }
+
+  @Test
+  void whenPostInvalidSdlcSystem_thenReturn400() throws Exception {
+    this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create("/api/v2/projects"))
+      .contentType(MediaType.APPLICATION_JSON)
+      .content("{\"id\": \"1\", \"sdlcSystem\": { \"id\": \"itunu\"}}"))
+      .andExpect(status().isBadRequest())
+      .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+      .andExpect(jsonPath("$.message", is ("sdlcSystem in request body is invalid")));
+  }
+
+  
 }
