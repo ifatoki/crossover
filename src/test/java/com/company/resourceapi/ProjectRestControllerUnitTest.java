@@ -1,17 +1,12 @@
 package com.company.resourceapi;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.print.attribute.standard.Media;
 
 import com.company.resourceapi.controllers.ProjectRestController;
 import com.company.resourceapi.entities.Project;
@@ -19,28 +14,14 @@ import com.company.resourceapi.entities.SdlcSystem;
 import com.company.resourceapi.services.ProjectService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.hibernate.cfg.SetSimpleValueTypeSecondPass;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
-import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.MockBeans;
 import org.springframework.http.MediaType;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultHandler;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.when;
 
 @WebMvcTest(ProjectRestController.class)
 public class ProjectRestControllerUnitTest {
@@ -87,7 +68,7 @@ public class ProjectRestControllerUnitTest {
     when(productService.createProject(ArgumentMatchers.any(Project.class))).thenReturn(project);
     
     this.mockMvc.perform(MockMvcRequestBuilders.post(URI.create("/api/v2/projects"))
-      .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+      .contentType(MediaType.APPLICATION_JSON)
       .content(objectMapper.writeValueAsString(project)))
       .andExpect(status().is2xxSuccessful())
       .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -95,10 +76,34 @@ public class ProjectRestControllerUnitTest {
     
   }
 
-  // @Test
-  // void when () throws Exception {
-  //   this.mockMvc.
-  // }
+  @Test
+  void whenUpdateProject_thenReturn200() throws Exception {
+    ObjectMapper objectMapper = new ObjectMapper();
+    SdlcSystem sdlcSystem = new SdlcSystem();
+    sdlcSystem.setId(1L);
+    Project project = new Project();
+    project.setId(24L);
+    project.setSdlcSystem(sdlcSystem);
+    project.setExternalId("NEVER_EVER");
+    Project newProject = new Project();
+    newProject.setId(30L);
+    newProject.setName("Project Micheal");
+    Project mergedProject = mergeProjects(project, newProject);
 
+    when(productService.updateProject(ArgumentMatchers.anyLong(), ArgumentMatchers.any(Project.class))).thenReturn(mergedProject);
 
+    this.mockMvc.perform(MockMvcRequestBuilders.patch(URI.create("/api/v2/projects/" + project.getId()))
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(objectMapper.writeValueAsString(newProject)))
+      .andExpect(status().is2xxSuccessful())
+      .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+      .andExpect(content().json(objectMapper.writeValueAsString(mergedProject)));
+  }
+
+  private Project mergeProjects(Project project1, Project project2) {
+    if (project2.getExternalId() != null) project1.setExternalId(project2.getExternalId());
+    if (project2.getSdlcSystem() != null) project1.setSdlcSystem(project2.getSdlcSystem());
+    if (project2.getName() != null) project1.setName(project2.getName());
+    return project1;
+  }
 }
